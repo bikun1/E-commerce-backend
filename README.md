@@ -1,6 +1,6 @@
 # E-Commerce Backend API
 
-A production-ready RESTful backend for an e-commerce platform, built with **Spring Boot**.  
+A production-ready RESTful backend for an e-commerce platform, built with **Spring Boot 3**.  
 Covers the full shopping flow — from authentication and product browsing to cart management, order processing, payments, and reviews.
 
 ---
@@ -68,7 +68,7 @@ Covers the full shopping flow — from authentication and product browsing to ca
 | Feature | Status |
 |---|---|
 | Create order | ✅ |
-| Order status lifecycle (PENDING → PAID → SHIPPED → COMPLETED / CANCELLED) | ✅ |
+| Order status lifecycle (`PENDING → PAID → SHIPPED → COMPLETED / CANCELLED`) | ✅ |
 | View order history | ✅ |
 | Admin can update order status | ✅ |
 | Stock validation before placing order | ✅ |
@@ -99,11 +99,11 @@ Covers the full shopping flow — from authentication and product browsing to ca
 ### Infrastructure
 | Feature | Status |
 |---|---|
-| Redis caching for product list (TTL 5 min) | ✅ |
+| Redis caching for product list (TTL 10 min) | ✅ |
 | Swagger / OpenAPI documentation | ✅ |
 | Docker + Docker Compose | ✅ |
 | Restore soft-deleted accounts | ✅ |
-| Unit testing | 🔜 In progress |
+| Unit testing | ✅ |
 | Cloud deployment | 🔜 Planned |
 
 ---
@@ -117,11 +117,12 @@ Covers the full shopping flow — from authentication and product browsing to ca
 | Authentication | Spring Security + JWT |
 | Database | MySQL |
 | Caching | Redis + Spring Cache |
-| Image storage | Cloudinary |
+| Image Storage | Cloudinary |
 | Email | Spring Mail |
 | Documentation | Swagger (SpringDoc OpenAPI) |
 | Containerization | Docker + Docker Compose |
-| Build tool | Maven |
+| Build Tool | Maven |
+| Testing | JUnit 5 + Mockito |
 
 ---
 
@@ -139,7 +140,7 @@ Controller Layer      (REST endpoints, request/response mapping)
   ▼
 Service Layer         (business logic, @Cacheable / @CacheEvict)
   │
-  ├──────────→ Redis  (product list cache, TTL 5 min)
+  ├──────────→ Redis  (product list cache, TTL 10 min)
   │
   ▼
 Repository Layer      (Spring Data JPA)
@@ -264,11 +265,13 @@ Create a `.env` file in the project root (or configure directly in `application.
 
 ```env
 # Database
-DB_HOST=localhost
-DB_PORT=3306
-DB_NAME=ecommerce
-DB_USERNAME=root
-DB_PASSWORD=your_password
+SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/ecommerce
+SPRING_DATASOURCE_USERNAME=root
+SPRING_DATASOURCE_PASSWORD=your_password
+
+# MySQL (Docker)
+MYSQL_ROOT_PASSWORD=your_root_password
+MYSQL_DATABASE=ecommerce
 
 # Redis
 REDIS_HOST=localhost
@@ -276,8 +279,6 @@ REDIS_PORT=6379
 
 # JWT
 JWT_SECRET=your_jwt_secret_key
-JWT_EXPIRATION_MS=86400000
-JWT_REFRESH_EXPIRATION_MS=604800000
 
 # Cloudinary
 CLOUDINARY_CLOUD_NAME=your_cloud_name
@@ -285,8 +286,6 @@ CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
 
 # Mail
-MAIL_HOST=smtp.gmail.com
-MAIL_PORT=587
 MAIL_USERNAME=your_email@gmail.com
 MAIL_PASSWORD=your_app_password
 ```
@@ -356,7 +355,7 @@ The product list endpoint (`GET /api/products`) is cached in Redis using Spring 
 |---|---|
 | Cache name | `products` |
 | Default TTL | 5 minutes |
-| Eviction trigger | create, update, delete, or restore a product |
+| Eviction trigger | Create, update, delete, or restore a product |
 | Read annotation | `@Cacheable("products")` |
 | Write annotation | `@CacheEvict(value = "products", allEntries = true)` |
 
@@ -390,6 +389,8 @@ Cache name, TTL, and serialization settings are configured in `RedisCacheConfig`
 mvn test
 ```
 
+The test suite covers service-layer business logic and repository interactions using **JUnit 5** and **Mockito**.
+
 ---
 
 ## Project Status
@@ -397,14 +398,14 @@ mvn test
 | Area | Status |
 |---|---|
 | Core REST API | ✅ Complete |
-| JWT authentication & RBAC | ✅ Complete |
-| Redis caching | ✅ Complete |
-| Order & payment flow | ✅ Complete |
-| Reviews & ratings | ✅ Complete |
-| Admin analytics | ✅ Complete |
-| Email notifications | ✅ Complete |
-| Docker support | ✅ Complete |
-| Swagger documentation | ✅ Complete |
-| Unit tests | 🔜 In progress |
-| Forgot password | 🔜 Planned |
-| Cloud deployment | 🔜 Planned |
+| JWT Authentication & RBAC | ✅ Complete |
+| Redis Caching | ✅ Complete |
+| Order & Payment Flow | ✅ Complete |
+| Reviews & Ratings | ✅ Complete |
+| Admin Analytics | ✅ Complete |
+| Email Notifications | ✅ Complete |
+| Docker Support | ✅ Complete |
+| Swagger Documentation | ✅ Complete |
+| Unit Tests | ✅ Complete |
+| Forgot Password | 🔜 Planned |
+| Cloud Deployment | 🔜 Planned |
